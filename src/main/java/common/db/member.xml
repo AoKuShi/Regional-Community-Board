@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.MemberDAO">
+
+    <resultMap id="memberResultMap" type="kr.ac.kopo.member.vo.MemberVO">
+        <id property="memberNo" column="MEMBER_NO" />
+        <result property="memberId" column="MEMBER_ID" />
+        <result property="password" column="MEMBER_PASSWORD" />
+        <result property="name" column="MEMBER_NAME" />
+        <result property="email" column="MEMBER_EMAIL" />
+        <result property="area" column="MEMBER_AREA" />
+        <result property="startDate" column="MEMBER_S_DATE" />
+        <result property="isAdmin" column="IS_ADMIN" />
+    </resultMap>
+    
+	<select id="selectMemberByNo" resultMap="memberResultMap">
+	    SELECT MEMBER_NO,
+	           MEMBER_ID,
+	           MEMBER_PASSWORD,
+	           MEMBER_NAME,
+	           MEMBER_EMAIL,
+	           MEMBER_AREA,
+	           TO_CHAR(MEMBER_S_DATE, 'YYYYMMDD') AS MEMBER_S_DATE,
+	           IS_ADMIN
+	    FROM ON_MEMBER
+	    WHERE MEMBER_NO = #{memberNo}
+	</select>
+	
+        <!-- Google ID와 비밀번호로 회원 조회 -->
+    <select id="selectMemberByIdAndPassword" resultMap="memberResultMap">
+        SELECT MEMBER_NO, MEMBER_ID, MEMBER_PASSWORD, MEMBER_NAME, MEMBER_EMAIL, MEMBER_AREA, TO_CHAR(MEMBER_S_DATE, 'YYYYMMDD') AS MEMBER_S_DATE, IS_ADMIN 
+        FROM ON_MEMBER 
+        WHERE MEMBER_ID = #{memberId} 
+          AND MEMBER_PASSWORD = #{password} 
+    </select>
+
+    <!-- 회원가입 처리 -->
+    <insert id="insertMember">
+    	INSERT INTO ON_MEMBER (MEMBER_NO, MEMBER_ID, MEMBER_PASSWORD, MEMBER_NAME, MEMBER_EMAIL, MEMBER_AREA) 
+		VALUES (SEQ_MEMBER_NO.NEXTVAL, #{memberId}, #{password}, #{name}, #{email}, #{area})
+    </insert>
+    
+    <update id="updateMember">
+    	UPDATE ON_MEMBER 
+		   SET MEMBER_NAME = #{name}, 
+			   MEMBER_EMAIL = #{email}, 
+			   MEMBER_AREA = #{area}
+		 WHERE MEMBER_NO = #{memberNo}
+    </update>
+    
+	<delete id="deleteMember" parameterType="int">
+	    DELETE FROM ON_MEMBER
+	    WHERE MEMBER_NO = #{memberNo}
+	</delete>
+	
+	<select id="selectAllMembers" resultMap="memberResultMap">
+	    SELECT MEMBER_NO,
+	           MEMBER_ID,
+	           MEMBER_PASSWORD,
+	           MEMBER_NAME,
+	           MEMBER_EMAIL,
+	           MEMBER_AREA,
+	           TO_CHAR(MEMBER_S_DATE, 'YYYY-MM-DD') AS MEMBER_S_DATE,
+	           IS_ADMIN
+	    FROM ON_MEMBER
+	    ORDER BY MEMBER_NO
+	</select>
+
+</mapper>
